@@ -1,0 +1,13 @@
+import express from "express"
+import * as userController from "../controller/user.controller"
+import { authtenticateForUser } from "../../middleware/authentication.middleware"
+const userRouter = express.Router()
+
+
+userRouter.post("/register",userController.register)
+userRouter.post("/login",userController.login)
+userRouter.post("/delete",userController.deleteUser)
+userRouter.post("/order/new",[authtenticateForUser],userController.newOrder)
+userRouter.post("/order/review",[authtenticateForUser],userController.newReview)
+
+export default userRouter;
