@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express"
-import { verifyUserToken } from "../src/utils/jwt.restaurant.utils"
-import { verifyRestaurantToken } from "../src/utils/jwt.user.utils"
+import { verifyUserToken } from "../src/utils/jwt.user.utils"
+import { verifyRestaurantToken } from "../src/utils/jwt.restaurant.utils"
 
 export const authtenticateForUser = (req:Request, res:Response, next:NextFunction) =>{
     const jwtToken = req.headers.authorization as string

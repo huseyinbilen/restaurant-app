@@ -9,8 +9,8 @@ interface IRestaurant extends Document {
     logo: string,
     branch: {
         branchName: string,
-        adress: {
-            openAdress: {
+        adddress: {
+            openAddress: {
                 type: String,
                 required: true
             },
@@ -27,6 +27,7 @@ interface IRestaurant extends Document {
         }
     },
     restaurantType: string,
+    averageRating: number,
     createdAt: Date,
     isDeleted: boolean,
 }
@@ -59,8 +60,8 @@ const RestaurantSchema = new Schema<IRestaurant>(
                 type: String,
                 required: true
             },
-            adress: {
-                openAdress: {
+            address: {
+                openAddress: {
                     type: String,
                     required: true
                 },
@@ -79,6 +80,10 @@ const RestaurantSchema = new Schema<IRestaurant>(
         restaurantType: {
             type: String,
             enum: ["Fast Food", "Cin Mutfagi", "Turk Mutfagi", "Ev Yemekleri", "Unlu Mamuller"]
+        },
+        averageRating: {
+            type: Number,
+            default: null
         },
         createdAt: {
             type: Date,

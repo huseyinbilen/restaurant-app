@@ -8,20 +8,11 @@ interface IOrder extends Document {
         photo: string,
         price: number
     }],
-    adress: {
-        openAdress: {
-            type: String,
-            required: true
-        },
+    address: {
+        openAddress: string,
         location: {
-            latitude: {
-                type: Number,
-                required: true
-            },
-            longitude: {
-                type: Number,
-                required: true
-            }
+            latitude: number,
+            longitude: number
         }
     },
     review: {
@@ -32,7 +23,8 @@ interface IOrder extends Document {
     createdAt: Date,
     isDeleted: boolean,
     restaurantId: mongoose.Types.ObjectId,
-    userId: mongoose.Types.ObjectId
+    userId: mongoose.Types.ObjectId,
+    status: string
 }
 
 const OrderSchema = new Schema<IOrder>(
@@ -56,8 +48,8 @@ const OrderSchema = new Schema<IOrder>(
             type: Number,
             required: true
         },
-        adress: {
-            openAdress: {
+        address: {
+            openAddress: {
                 type: String,
                 required: true
             },
@@ -74,8 +66,7 @@ const OrderSchema = new Schema<IOrder>(
         },
         review: {
             comment: {
-                type: String,
-                default: null
+                type: String
             },
             point: {
                 type: Number,
@@ -98,6 +89,11 @@ const OrderSchema = new Schema<IOrder>(
         userId: {
             type: Schema.Types.ObjectId,
             ref: 'User'
+        },
+        status: {
+            type: String,
+            default: "Yolda",
+            enum: ["Yolda", "Teslim Edildi", "Teslim Edilemedi", "İptal Edildi"]
         }
     }
 )

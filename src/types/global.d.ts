@@ -2,8 +2,8 @@ export {}
 declare global{
     namespace NodeJS{
         interface ProcessEnv {
-            JWT_USER: String
-            JWT_RESTAURANT: String
+            JWT_USER: string
+            JWT_RESTAURANT: string
         }
     }
 }

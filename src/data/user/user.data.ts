@@ -7,8 +7,8 @@ interface IUser extends Document {
     password: string,
     birthday: Date,
     gender: string,
-    adress: [{
-        openAdress: string,
+    address: [{
+        openAddress: string,
         location: {
             latitude: string,
             longitude: string
@@ -40,10 +40,10 @@ const UserSchema = new Schema<IUser>(
         },
         gender: {
             type: String,
-            enum: ["Man", "Woman"]
+            enum: ["male", "female"]
         },
-        adress: [{
-            openAdress: {
+        address: [{
+            openAddress: {
                 type: String,
                 required: true
             },
