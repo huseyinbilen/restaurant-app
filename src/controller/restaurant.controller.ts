@@ -166,6 +166,14 @@ export const addMenu = async (req: Request, res: Response) => {
         let existingMenu = await Menu.findOne({ restaurantId });
 
         if (existingMenu) {
+
+            await Promise.all(items.map(async (item: { photo: any; }) => {
+                if (item.photo) {
+                    const photoUrl = await uploadPhotoToS3(item.photo);
+                    item.photo = photoUrl;
+                }
+            }));
+
             existingMenu.items.push(...items);
             await existingMenu.save();
 
@@ -389,5 +397,29 @@ export const updateRestaurantAverageRating = async (restaurantId: mongoose.Types
         }
     } catch (error) {
         console.error(`Error updating average rating for restaurant ${restaurantId}:`, error);
+    }
+};
+
+const uploadPhotoToS3 = async (photo: any): Promise<string> => {
+    try {
+        const s3 = new AWS.S3({
+            accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+            secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
+        });
+
+        // Setting up S3 upload parameters
+        const params = {
+            Bucket: process.env.PHOTO_BUCKET_NAME, // Değiştirilecek
+            Key: `${Date.now()}-menu-photo.jpg`, // Dosya adını dilediğiniz gibi değiştirin
+            Body: photo.buffer
+        };
+
+        // Uploading file to the bucket
+        const result = await s3.upload(params).promise();
+
+        return result.Location;
+    } catch (error) {
+        console.error("Photo upload failed:", error);
+        throw error;
     }
 };
