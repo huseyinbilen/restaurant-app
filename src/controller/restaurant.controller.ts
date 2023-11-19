@@ -58,7 +58,7 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
     }
 }
 
-export const updateAvatar = async (req: Request, res: Response) => {
+export const updateLogo = async (req: Request, res: Response) => {
     try {
         let restaurant = await Restaurant.findById(req.body.restaurant._id);
         if(restaurant) {
@@ -77,7 +77,7 @@ export const updateAvatar = async (req: Request, res: Response) => {
       
             // Setting up S3 upload parameters
             const params = {
-                Bucket: process.env.AVATAR_BUCKET_NAME,
+                Bucket: process.env.LOGO_BUCKET_NAME,
                 Key: `${restaurantName}-logo.jpg`, // File name you want to save as
                 Body: file.buffer
             };
