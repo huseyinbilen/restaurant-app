@@ -4,6 +4,9 @@ import User from "../data/user/user.data"
 import { generateToken } from "../utils/jwt.user.utils"
 import Order from "../data/order/order.data";
 import { updateRestaurantAverageRating } from "./restaurant.controller";
+import multer, { Multer } from 'multer';
+const AWS = require('aws-sdk');
+
 
 export const register = async (req: Request, res: Response, next: NextFunction) => {
     // Password Encryption
@@ -51,6 +54,45 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
     } catch (exception) {
         console.error(exception);
         res.status(500).json({ status: "fail", msg: "User Login Failed" });
+    }
+}
+
+export const updateAvatar = async (req: Request, res: Response) => {
+    try {
+        let user = await User.findById(req.body.user._id);
+        if(user) {
+            const username = req.body.user.username;
+            const file = req.file;
+    
+    
+            if (!file) {
+                return res.status(400).json({ status: "fail", msg: "No file provided" });
+            }
+    
+            const s3 = new AWS.S3({
+                accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+                secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
+            });
+      
+            // Setting up S3 upload parameters
+            const params = {
+                Bucket: process.env.AVATAR_BUCKET_NAME,
+                Key: `${username}-avatar.jpg`, // File name you want to save as
+                Body: file.buffer
+            };
+      
+            // Uploading file to the bucket
+            const result = await s3.upload(params).promise();
+            user.photo = result.location;
+            user.save();
+
+            res.json({ status: "success", msg: "Photo updated successfully" });
+        }
+        res.status(500).json({ status: "fail", msg: "User Not Found" });
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ status: "fail", msg: "Photo update failed" });
     }
 }
 

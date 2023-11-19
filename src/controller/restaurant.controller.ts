@@ -6,6 +6,8 @@ import Menu from "../data/menu/menu.data";
 import mongoose from "mongoose";
 import Order from "../data/order/order.data";
 import User from "../data/user/user.data";
+import multer, { Multer } from 'multer';
+const AWS = require('aws-sdk');
 
 export const register = async (req: Request, res: Response, next: NextFunction) => {
     // Password Encryption
@@ -53,6 +55,45 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
     } catch (exception) {
         console.error(exception);
         res.status(500).json({ status: "fail", msg: "Restaurant Login Failed" });
+    }
+}
+
+export const updateAvatar = async (req: Request, res: Response) => {
+    try {
+        let restaurant = await Restaurant.findById(req.body.restaurant._id);
+        if(restaurant) {
+            const restaurantName = req.body.restaurant.restaurantName;
+            const file = req.file;
+    
+    
+            if (!file) {
+                return res.status(400).json({ status: "fail", msg: "No file provided" });
+            }
+    
+            const s3 = new AWS.S3({
+                accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+                secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
+            });
+      
+            // Setting up S3 upload parameters
+            const params = {
+                Bucket: process.env.AVATAR_BUCKET_NAME,
+                Key: `${restaurantName}-logo.jpg`, // File name you want to save as
+                Body: file.buffer
+            };
+      
+            // Uploading file to the bucket
+            const result = await s3.upload(params).promise();
+            restaurant.logo = result.location;
+            restaurant.save();
+
+            res.json({ status: "success", msg: "Photo updated successfully" });
+        }
+        res.status(500).json({ status: "fail", msg: "User Not Found" });
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ status: "fail", msg: "Photo update failed" });
     }
 }
 

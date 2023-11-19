@@ -14,6 +14,7 @@ interface IUser extends Document {
             longitude: string
         }
     }],
+    photo: string,
     createdAt: Date,
     isDeleted: boolean,
 }
@@ -58,6 +59,10 @@ const UserSchema = new Schema<IUser>(
                 }
             }
         }],
+        photo: {
+            type: String,
+            default: null
+        },
         createdAt: {
             type: Date,
             default: Date.now()
